@@ -13,3 +13,9 @@ scripts/*.txt
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Dependencias (Railway las instala solo)
+node_modules/
+
+# Claude Code (interno, no forma parte del sitio)
+.claude/
