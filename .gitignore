@@ -1,0 +1,15 @@
+# Datos crudos y de trabajo (no forman parte del sitio final)
+products_raw.json
+products_raw_all.json
+collections_all.json
+handle_category_map.json
+handle_subcategory_map.json
+handle_activity_map.json
+featured_handles.json
+ofertas_handles.json
+scripts/*.txt
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

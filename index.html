@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitStyle · Ropa Deportiva al por Mayor</title>
+  <meta name="description" content="Ropa deportiva de alta calidad al por mayor. Leggins, tops, conjuntos y más. Pide fácil por WhatsApp.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Barra superior -->
+  <div class="topbar">
+    <span class="topbar-content">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+      Envíos en Turbaco (¡GRATIS!) y Cartagena · Haz tu pedido fácil por WhatsApp
+    </span>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú">☰</button>
+      <a href="#inicio" class="logo">Fit<span>Style</span></a>
+      <nav class="nav" id="nav">
+        <a href="#inicio" data-cat="all" class="nav-link">Inicio</a>
+        <div class="nav-item" data-nav-cat="hombre">
+          <button type="button" class="nav-link nav-drop-btn" data-cat="hombre">Hombre <span class="caret">▾</span></button>
+          <div class="dropdown" id="dropdown-hombre"></div>
+        </div>
+        <div class="nav-item" data-nav-cat="mujer">
+          <button type="button" class="nav-link nav-drop-btn" data-cat="mujer">Mujer <span class="caret">▾</span></button>
+          <div class="dropdown" id="dropdown-mujer"></div>
+        </div>
+        <div class="nav-item" data-nav-cat="ninos">
+          <button type="button" class="nav-link nav-drop-btn" data-cat="ninos">Niños <span class="caret">▾</span></button>
+          <div class="dropdown" id="dropdown-ninos"></div>
+        </div>
+        <div class="nav-item" data-nav-cat="accesorios">
+          <button type="button" class="nav-link nav-drop-btn" data-cat="accesorios">Accesorios <span class="caret">▾</span></button>
+          <div class="dropdown" id="dropdown-accesorios"></div>
+        </div>
+        <div class="nav-item" data-nav-cat="deportes">
+          <button type="button" class="nav-link nav-drop-btn" data-cat="deportes">Deportes <span class="caret">▾</span></button>
+          <div class="dropdown" id="dropdown-deportes"></div>
+        </div>
+        <a href="#ofertas" data-cat="ofertas" class="nav-link nav-ofertas"><svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg> Ofertas</a>
+      </nav>
+      <div class="header-actions">
+        <input type="search" class="search" id="search" placeholder="Buscar producto...">
+        <button type="button" class="cart-btn" id="cartBtn" aria-label="Ver pedido">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero (slider) -->
+  <section class="hero" id="inicio">
+    <div class="hero-slides" id="heroSlides">
+      <div class="hero-slide grad-1 active" style="background-image:url('images/productos/esqueleto-advance-de-mujer-almendra-0.jpg')">
+        <div class="hero-content">
+          <p class="hero-kicker">Colección 2026</p>
+          <h1>Viste tu mejor versión</h1>
+          <p class="hero-sub">Ropa deportiva de alta calidad al por mayor. Elige tu favorito y pídelo en segundos por WhatsApp.</p>
+          <a href="#catalogo" class="btn btn-primary">Ver catálogo</a>
+        </div>
+      </div>
+      <div class="hero-slide" style="background-image:url('images/ofertas/oferta-2-buzos-compresion-hombre.png')">
+        <div class="hero-content">
+          <p class="hero-kicker"><svg viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg> Por tiempo limitado</p>
+          <h1>Ofertas que no puedes dejar pasar</h1>
+          <p class="hero-sub">Packs y combos con hasta 40% de descuento. Aprovecha antes de que se agoten.</p>
+          <a href="#ofertas" class="btn btn-primary">Ver ofertas</a>
+        </div>
+      </div>
+      <div class="hero-slide grad-2" style="background-image:url('images/productos/leggins-control-verde-oliva-medio-copia-0.jpg')">
+        <div class="hero-content">
+          <p class="hero-kicker">Los favoritos de siempre</p>
+          <h1>Leggins que amarás</h1>
+          <p class="hero-sub">Cientos de referencias, colores y tallas. Comodidad y estilo para entrenar o para el día a día.</p>
+          <a href="#" data-cat="mujer" class="btn btn-primary">Ver mujer</a>
+        </div>
+      </div>
+      <div class="hero-slide grad-3" style="background-image:url('images/productos/licra-corta-pocket-de-hombre-negro-0.jpg')">
+        <div class="hero-content">
+          <p class="hero-kicker">Línea hombre</p>
+          <h1>Rendimiento en cada movimiento</h1>
+          <p class="hero-sub">Camisetas, buzos, pantalonetas y más, pensados para tu entrenamiento.</p>
+          <a href="#" data-cat="hombre" class="btn btn-primary">Ver hombre</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+  </section>
+
+  <!-- Nuevos Lanzamientos -->
+  <section class="strip-section" aria-label="Nuevos Lanzamientos">
+    <div class="container">
+      <div class="strip-head">
+        <h3 class="strip-title">Nuevos Lanzamientos</h3>
+      </div>
+      <div class="strip-wrap">
+        <button type="button" class="strip-arrow strip-arrow-prev" data-strip="stripNuevos" aria-label="Anterior"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <div class="strip-scroll" id="stripNuevos"></div>
+        <button type="button" class="strip-arrow strip-arrow-next" data-strip="stripNuevos" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías destacadas -->
+  <section class="categorias" aria-label="Categorías">
+    <div class="container">
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+  </section>
+
+  <!-- Ofertas -->
+  <section class="ofertas-section" id="ofertas">
+    <div class="container">
+      <div class="section-head">
+        <h2><svg class="icon-flame" viewBox="0 0 20 20" width="20" height="20" fill="var(--yellow)"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg> Ofertas y Promociones</h2>
+      </div>
+      <div class="ofertas-grid" id="ofertasGrid"></div>
+
+      <div class="section-head sale-subhead">
+        <h2 class="sale-subtitle">Más productos en descuento</h2>
+        <p class="result-count" id="saleResultCount"></p>
+      </div>
+      <div class="product-grid" id="saleGrid"></div>
+      <div class="load-more-wrap" id="saleLoadMoreWrap" hidden>
+        <button type="button" class="btn btn-primary" id="saleLoadMoreBtn">Ver más ofertas</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Amantes de los Leggins -->
+  <section class="strip-section" aria-label="Amantes de los Leggins">
+    <div class="container">
+      <div class="strip-head">
+        <h3 class="strip-title">Amantes de los Leggins</h3>
+        <a href="#" data-cat="mujer" class="strip-link">Ver todo en Mujer →</a>
+      </div>
+      <div class="strip-wrap">
+        <button type="button" class="strip-arrow strip-arrow-prev" data-strip="stripLeggins" aria-label="Anterior"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <div class="strip-scroll" id="stripLeggins"></div>
+        <button type="button" class="strip-arrow strip-arrow-next" data-strip="stripLeggins" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Más Vendidos -->
+  <section class="strip-section" aria-label="Más Vendidos">
+    <div class="container">
+      <div class="strip-head">
+        <h3 class="strip-title">Más Vendidos</h3>
+      </div>
+      <div class="strip-wrap">
+        <button type="button" class="strip-arrow strip-arrow-prev" data-strip="stripVendidos" aria-label="Anterior"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <div class="strip-scroll" id="stripVendidos"></div>
+        <button type="button" class="strip-arrow strip-arrow-next" data-strip="stripVendidos" aria-label="Siguiente"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catálogo -->
+  <section class="catalogo" id="catalogo">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="catalogoTitulo">Nuestros productos</h2>
+        <div class="filtros" id="filtros">
+          <button type="button" class="chip active" data-cat="all">Todos</button>
+          <button type="button" class="chip" data-cat="mujer">Mujer</button>
+          <button type="button" class="chip" data-cat="hombre">Hombre</button>
+          <button type="button" class="chip" data-cat="ninos">Niños</button>
+          <button type="button" class="chip" data-cat="accesorios">Accesorios</button>
+          <button type="button" class="chip" data-cat="deportes">Deportes</button>
+          <button type="button" class="chip chip-ofertas" data-cat="ofertas"><svg viewBox="0 0 20 20" width="13" height="13" fill="currentColor"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg> Ofertas</button>
+        </div>
+      </div>
+      <div class="sub-filtros" id="subFiltros" hidden></div>
+      <p class="result-count" id="resultCount"></p>
+      <div class="product-grid" id="productGrid"></div>
+      <p class="empty" id="emptyMsg" hidden>No encontramos productos con ese criterio.</p>
+      <div class="load-more-wrap" id="loadMoreWrap" hidden>
+        <button type="button" class="btn btn-primary" id="loadMoreBtn">Ver más productos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <a href="#inicio" class="logo logo-footer">Fit<span>Style</span></a>
+        <p>Ropa deportiva al por mayor. Calidad y estilo para tu negocio.</p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>WhatsApp: <a href="https://wa.me/573023958923" target="_blank" rel="noopener">+57 302 395 8923</a></p>
+        <p>Pedidos y mayoristas</p>
+      </div>
+      <div>
+        <h4>Categorías</h4>
+        <p><a href="#" data-cat="mujer">Mujer</a></p>
+        <p><a href="#" data-cat="hombre">Hombre</a></p>
+        <p><a href="#" data-cat="ninos">Niños</a></p>
+        <p><a href="#" data-cat="accesorios">Accesorios</a></p>
+      </div>
+      <div>
+        <h4>Políticas</h4>
+        <p><a href="#" data-policy="envios">Envíos y Entregas</a></p>
+        <p><a href="#" data-policy="cambios">Cambios y Devoluciones</a></p>
+        <p><a href="#" data-policy="comprar">Cómo Comprar</a></p>
+      </div>
+    </div>
+    <div class="container footer-payments">
+      <span class="footer-payments-label">Formas de pago:</span>
+      <span class="pay-badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="3"></circle><path d="M6 12h.01M18 12h.01"></path></svg> Efectivo</span>
+      <span class="pay-badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Nequi</span>
+      <span class="pay-badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Daviplata</span>
+      <span class="pay-badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"></line><line x1="5" y1="21" x2="5" y2="10"></line><line x1="9" y1="21" x2="9" y2="10"></line><line x1="15" y1="21" x2="15" y2="10"></line><line x1="19" y1="21" x2="19" y2="10"></line><polygon points="12 2 21 8 3 8"></polygon></svg> Transferencia Bancolombia</span>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span> FitStyle. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Modal de políticas -->
+  <div class="modal" id="policyModal" hidden>
+    <div class="modal-overlay" data-policy-close></div>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+      <button type="button" class="modal-close" data-policy-close aria-label="Cerrar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+      <h3 id="policyTitle" class="policy-title"></h3>
+      <div id="policyBody" class="policy-body"></div>
+    </div>
+  </div>
+
+  <!-- Botón flotante WhatsApp -->
+  <a href="https://wa.me/573023958923?text=%C2%A1Hola!%20Quiero%20informaci%C3%B3n%20sobre%20sus%20productos." class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+    <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor"><path d="M16 3C9 3 3.3 8.7 3.3 15.7c0 2.4.7 4.7 1.9 6.7L3 29l6.8-2.1c1.9 1 4 1.6 6.2 1.6 7 0 12.7-5.7 12.7-12.7C28.7 8.7 23 3 16 3zm0 23c-2 0-3.9-.5-5.5-1.5l-.4-.2-4 1.2 1.2-3.9-.3-.4a10.3 10.3 0 01-1.6-5.5C5.4 10 10.1 5.3 16 5.3S26.6 10 26.6 15.7 21.9 26 16 26zm5.8-7.7c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-2-1.8-2.3-.2-.3 0-.5.1-.6l.5-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2.9 1.2 2.9.8 3.5.8.5 0 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg>
+  </a>
+
+  <!-- Carrito / Pedido -->
+  <div class="cart-drawer" id="cartDrawer" hidden>
+    <div class="cart-overlay" data-cart-close></div>
+    <aside class="cart-panel" role="dialog" aria-modal="true" aria-label="Tu pedido">
+      <div class="cart-header">
+        <h3><svg class="icon-cart-title" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>Tu pedido</h3>
+        <button type="button" class="modal-close" data-cart-close aria-label="Cerrar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <p class="cart-empty" id="cartEmpty">Tu pedido está vacío.<br>Agrega productos para continuar.</p>
+      <div class="cart-footer" id="cartFooter" hidden>
+        <div class="cart-line"><span>Productos</span><span id="cartSubtotal">$0</span></div>
+        <div class="cart-line"><span>Envío</span><span id="cartShipping">Elige tu ciudad</span></div>
+        <div class="cart-total"><span>Total</span><span id="cartTotal">$0 COP</span></div>
+        <form id="checkoutForm" class="order-form">
+          <label>
+            Tu nombre *
+            <input type="text" name="nombre" required placeholder="Ej: María López">
+          </label>
+          <label>
+            Ciudad de entrega *
+            <select name="ciudad" id="ciudadSelect" required>
+              <option value="" disabled selected>Selecciona tu ciudad</option>
+              <option value="Turbaco">Turbaco — Envío GRATIS</option>
+              <option value="Cartagena">Cartagena</option>
+            </select>
+          </label>
+          <label id="barrioWrap" hidden>
+            Barrio (Cartagena) *
+            <select name="barrio" id="barrioSelect"></select>
+          </label>
+          <label>
+            Dirección *
+            <input type="text" name="direccion" required placeholder="Ej: Calle 5 #3-20, cerca al parque">
+          </label>
+          <label>
+            Comentario (opcional)
+            <textarea name="comentario" rows="2" placeholder="Punto de referencia, forma de pago, dudas..."></textarea>
+          </label>
+          <button type="submit" class="btn btn-whatsapp">
+            <svg viewBox="0 0 32 32" width="20" height="20" fill="currentColor"><path d="M16 3C9 3 3.3 8.7 3.3 15.7c0 2.4.7 4.7 1.9 6.7L3 29l6.8-2.1c1.9 1 4 1.6 6.2 1.6 7 0 12.7-5.7 12.7-12.7C28.7 8.7 23 3 16 3z"/></svg>
+            Enviar pedido por WhatsApp
+          </button>
+          <p class="form-note">Se abrirá WhatsApp con todos tus productos listos para enviar.</p>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Modal de pedido -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-overlay" data-close></div>
+    <div class="modal-box modal-detail" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button type="button" class="modal-close" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+      <div class="detail-grid">
+        <div class="detail-gallery">
+          <div class="detail-main"><img id="modalImg" src="" alt=""></div>
+          <div class="detail-thumbs" id="modalThumbs"></div>
+        </div>
+        <div class="detail-info">
+          <span class="detail-cat" id="modalCat"></span>
+          <h3 id="modalTitle">Producto</h3>
+          <p class="modal-price" id="modalPrice"></p>
+          <p class="detail-avail" id="modalAvail"></p>
+          <div class="detail-desc" id="modalDesc"></div>
+          <form id="orderForm" class="order-form">
+            <div class="form-row">
+              <label>
+                Talla
+                <select name="talla" id="tallaSelect"></select>
+              </label>
+              <label>
+                Cantidad *
+                <input type="number" name="cantidad" min="1" value="1" required>
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-add">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Agregar al pedido
+            </button>
+            <p class="form-note">Agrega todos los productos que quieras y envíalos juntos por WhatsApp.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/products.js"></script>
+  <script src="js/featured.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
