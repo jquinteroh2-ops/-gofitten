@@ -65,7 +65,7 @@ function Clean-Description($html) {
     $t = [regex]::Replace($t, '(?i)</p>|<br\s*/?>|</li>', "`n")
     $t = [regex]::Replace($t, '<[^>]+>', ' ')
     $t = [System.Net.WebUtility]::HtmlDecode($t)
-    $t = [regex]::Replace($t, '(?i)tenfit\s*express', 'FitStyle')
+    $t = [regex]::Replace($t, '(?i)tenfit\s*express', 'GoFitten')
     $t = [regex]::Replace($t, '[ \t]+', ' ')
     $t = [regex]::Replace($t, ' *\n *', "`n")
     $t = [regex]::Replace($t, '\n{3,}', "`n`n")

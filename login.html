@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso dueños · GoFitten</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="login-body">
+
+  <main class="login-wrap">
+    <div class="login-card">
+      <a href="/" class="login-logo">Go<span>Fitten</span></a>
+      <h1>Panel de dueños</h1>
+      <p class="login-sub">Inicia sesión para gestionar productos y ver los pedidos.</p>
+
+      <form id="loginForm" autocomplete="on">
+        <label>
+          Usuario
+          <input type="text" name="usuario" id="usuario" required autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="admin">
+        </label>
+        <label>
+          Contraseña
+          <div class="pw-field">
+            <input type="password" name="password" id="password" required autocomplete="current-password" placeholder="••••••••">
+            <button type="button" class="pw-toggle" id="pwToggle" aria-label="Mostrar contraseña">Ver</button>
+          </div>
+        </label>
+        <p class="form-error" id="loginError" hidden></p>
+        <button type="submit" class="btn btn-yellow btn-block" id="loginBtn">Entrar</button>
+      </form>
+
+      <a href="/" class="login-back">← Volver a la tienda</a>
+    </div>
+  </main>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

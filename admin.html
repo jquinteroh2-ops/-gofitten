@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel · GoFitten</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <a href="/" class="admin-logo">Go<span>Fitten</span> <em>panel</em></a>
+      <div class="admin-user">
+        <span class="admin-user-name" id="adminUser">…</span>
+        <a href="/" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">Ver tienda</a>
+        <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn">Salir</button>
+      </div>
+    </div>
+    <nav class="admin-tabs">
+      <button type="button" class="admin-tab active" data-tab="pedidos">
+        Pedidos <span class="tab-badge" id="tabBadgePedidos" hidden>0</span>
+      </button>
+      <button type="button" class="admin-tab" data-tab="productos">Productos</button>
+      <button type="button" class="admin-tab" data-tab="cuenta">Cuenta</button>
+    </nav>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ===================== PEDIDOS ===================== -->
+    <section class="admin-view active" id="view-pedidos">
+      <div class="stats-row" id="statsRow"></div>
+
+      <div class="toolbar">
+        <input type="search" id="orderSearch" class="input" placeholder="Buscar por cliente, producto, barrio o N.º de pedido...">
+        <div class="chips" id="orderStatusChips">
+          <button type="button" class="chip active" data-status="todos">Todos</button>
+          <button type="button" class="chip" data-status="nuevo">Nuevos</button>
+          <button type="button" class="chip" data-status="confirmado">Confirmados</button>
+          <button type="button" class="chip" data-status="entregado">Entregados</button>
+          <button type="button" class="chip" data-status="cancelado">Cancelados</button>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" id="exportBtn">Exportar CSV</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="reloadOrdersBtn">Actualizar</button>
+      </div>
+
+      <div id="ordersList" class="orders-list"></div>
+      <p class="empty-state" id="ordersEmpty" hidden>Todavía no hay pedidos registrados.</p>
+    </section>
+
+    <!-- ===================== PRODUCTOS ===================== -->
+    <section class="admin-view" id="view-productos">
+      <div class="stats-row" id="prodStatsRow"></div>
+
+      <div class="toolbar">
+        <input type="search" id="prodSearch" class="input" placeholder="Buscar producto por nombre...">
+        <select id="prodCat" class="input input-sm">
+          <option value="">Todas las categorías</option>
+          <option value="mujer">Mujer</option>
+          <option value="hombre">Hombre</option>
+          <option value="ninos">Niños</option>
+          <option value="accesorios">Accesorios</option>
+          <option value="deportes">Deportes</option>
+        </select>
+        <select id="prodEstado" class="input input-sm">
+          <option value="">Todos los estados</option>
+          <option value="visible">Visibles</option>
+          <option value="oculto">Ocultos</option>
+          <option value="agotado">Agotados</option>
+          <option value="oferta">En oferta</option>
+          <option value="editado">Editados</option>
+        </select>
+      </div>
+
+      <p class="result-count" id="prodCount"></p>
+      <div id="prodList" class="prod-list"></div>
+      <div class="load-more-wrap">
+        <button type="button" class="btn btn-ghost" id="prodMoreBtn" hidden>Ver más productos</button>
+      </div>
+    </section>
+
+    <!-- ===================== CUENTA ===================== -->
+    <section class="admin-view" id="view-cuenta">
+      <div class="panel-grid">
+        <div class="panel">
+          <h2>Cambiar mi contraseña</h2>
+          <form id="passwordForm">
+            <label>Contraseña actual
+              <input type="password" name="actual" required autocomplete="current-password">
+            </label>
+            <label>Nueva contraseña
+              <input type="password" name="nueva" required minlength="6" autocomplete="new-password">
+            </label>
+            <label>Repetir nueva contraseña
+              <input type="password" name="repetir" required minlength="6" autocomplete="new-password">
+            </label>
+            <p class="form-error" id="passwordError" hidden></p>
+            <button type="submit" class="btn btn-yellow">Guardar contraseña</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Dueños con acceso</h2>
+          <div id="usersList" class="users-list"></div>
+          <hr class="panel-sep">
+          <h3>Agregar otro dueño</h3>
+          <form id="userForm">
+            <label>Usuario
+              <input type="text" name="usuario" required minlength="3" autocapitalize="none" spellcheck="false" placeholder="ej: laura">
+            </label>
+            <label>Contraseña
+              <input type="password" name="password" required minlength="6" autocomplete="new-password">
+            </label>
+            <p class="form-error" id="userError" hidden></p>
+            <button type="submit" class="btn btn-dark">Crear acceso</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal de edición de producto -->
+  <div class="modal" id="editModal" hidden>
+    <div class="modal-overlay" data-edit-close></div>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+      <button type="button" class="modal-close" data-edit-close aria-label="Cerrar">✕</button>
+      <h3 id="editTitle">Editar producto</h3>
+      <div class="edit-head">
+        <img id="editImg" src="" alt="">
+        <div>
+          <p class="edit-id" id="editId"></p>
+          <p class="edit-orig" id="editOrig"></p>
+        </div>
+      </div>
+      <form id="editForm">
+        <label>Nombre del producto
+          <input type="text" name="title" required maxlength="160">
+        </label>
+        <div class="form-row">
+          <label>Precio (COP)
+            <input type="number" name="priceNum" min="0" step="500" required>
+          </label>
+          <label>Precio tachado (opcional)
+            <input type="number" name="compareAtPrice" min="0" step="500" placeholder="Sin descuento">
+          </label>
+        </div>
+        <label>Descripción
+          <textarea name="description" rows="4" maxlength="4000"></textarea>
+        </label>
+        <div class="switch-row">
+          <label class="switch"><input type="checkbox" name="available"> <span>Disponible (si se apaga aparece "Agotado")</span></label>
+          <label class="switch"><input type="checkbox" name="onSale"> <span>Marcar como oferta</span></label>
+          <label class="switch"><input type="checkbox" name="hidden"> <span>Ocultar de la tienda (deshabilitado)</span></label>
+        </div>
+        <p class="form-error" id="editError" hidden></p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="resetProductBtn">Restaurar original</button>
+          <button type="submit" class="btn btn-yellow">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/products.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

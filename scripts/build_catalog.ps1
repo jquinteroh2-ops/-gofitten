@@ -33,7 +33,7 @@ function Clean-Description($html) {
     # decodificar entidades HTML
     $t = [System.Net.WebUtility]::HtmlDecode($t)
     # reemplazar marca original por la nueva
-    $t = [regex]::Replace($t, '(?i)tenfit\s*express', 'FitStyle')
+    $t = [regex]::Replace($t, '(?i)tenfit\s*express', 'GoFitten')
     # colapsar espacios y limpiar
     $t = [regex]::Replace($t, '[ \t]+', ' ')
     $t = [regex]::Replace($t, ' *\n *', "`n")

@@ -19,3 +19,6 @@ node_modules/
 
 # Claude Code (interno, no forma parte del sitio)
 .claude/
+
+# Datos del panel de dueños (pedidos, usuarios) - se generan en el servidor
+data-store/

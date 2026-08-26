@@ -1,5 +1,5 @@
 /* ============================================================
-   FitStyle - Lógica del catálogo y pedidos por WhatsApp
+   GoFitten - Lógica del catálogo y pedidos por WhatsApp
    ============================================================ */
 
 // >>> CONFIGURA AQUÍ TU NÚMERO (código de país + número, sin + ni espacios) <<<
@@ -89,12 +89,38 @@ let cart = loadCart();
 
 /* ---------- Carrito: persistencia ---------- */
 function loadCart() {
-  try { return JSON.parse(localStorage.getItem("fitstyle_cart")) || []; }
+  try { return JSON.parse(localStorage.getItem("gofitten_cart")) || []; }
   catch (e) { return []; }
 }
 function saveCart() {
-  try { localStorage.setItem("fitstyle_cart", JSON.stringify(cart)); }
+  try { localStorage.setItem("gofitten_cart", JSON.stringify(cart)); }
   catch (e) { /* localStorage bloqueado (ej. file:// con protecciones de privacidad); el carrito sigue funcionando en memoria */ }
+}
+
+/* ---------- Ajustes hechos desde el panel de dueños ---------- */
+// El panel guarda solo los cambios (precio, nombre, agotado, oculto...).
+// Aquí se aplican sobre el catálogo antes de pintar nada en pantalla.
+async function aplicarAjustesDelPanel() {
+  try {
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 4000);
+    const res = await fetch("/api/catalogo/ajustes", { cache: "no-store", signal: ctrl.signal });
+    clearTimeout(timeout);
+    if (!res.ok) return;
+
+    const items = (await res.json()).items || {};
+    const ocultos = [];
+    PRODUCTS.forEach((p, i) => {
+      const ov = items[p.id];
+      if (!ov) return;
+      if (ov.hidden) { ocultos.push(i); return; }
+      Object.assign(p, ov);
+    });
+    // Los productos deshabilitados desaparecen del catálogo, buscador y ofertas
+    for (let i = ocultos.length - 1; i >= 0; i--) PRODUCTS.splice(ocultos[i], 1);
+  } catch (e) {
+    // Sin servidor (o sin conexión) se muestra el catálogo tal cual viene
+  }
 }
 
 /* ---------- Helpers ---------- */
@@ -631,6 +657,7 @@ function buildOrderMessage(data) {
   lines.push("");
   lines.push("— — — — —");
   lines.push(`👤 *Nombre:* ${data.nombre}`);
+  if (data.telefono) lines.push(`📱 *Teléfono:* ${data.telefono}`);
   lines.push(`📍 *Ciudad:* ${zona}`);
   if (data.direccion) lines.push(`🏠 *Dirección:* ${data.direccion}`);
   if (data.comentario) lines.push(`📝 *Comentario:* ${data.comentario}`);
@@ -652,6 +679,7 @@ function handleCheckout(e) {
   const form = e.target;
   const data = {
     nombre: form.querySelector('[name="nombre"]').value.trim(),
+    telefono: form.querySelector('[name="telefono"]').value.trim(),
     ciudad: $("#ciudadSelect").value,
     barrio: $("#barrioSelect") ? $("#barrioSelect").value : "",
     direccion: form.querySelector('[name="direccion"]').value.trim(),
@@ -660,7 +688,46 @@ function handleCheckout(e) {
   };
   const text = buildOrderMessage(data);
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
+  // Se guarda en el historial de los dueños y enseguida se abre WhatsApp.
+  // No se espera la respuesta para que el navegador no bloquee la ventana.
+  registrarPedido(data);
   window.open(url, "_blank");
+}
+
+/* ---------- Historial de pedidos (panel de dueños) ---------- */
+let ultimoPedidoEnviado = { firma: "", cuando: 0 };
+
+function firmaDelPedido(data) {
+  return JSON.stringify([data.nombre, data.ciudad, data.barrio, cart.map((it) => [it.id, it.talla, it.cantidad])]);
+}
+
+function registrarPedido(data) {
+  // Evita duplicados si el cliente pulsa "Enviar pedido" varias veces seguidas
+  const firma = firmaDelPedido(data);
+  if (firma === ultimoPedidoEnviado.firma && Date.now() - ultimoPedidoEnviado.cuando < 5 * 60 * 1000) return;
+  ultimoPedidoEnviado = { firma, cuando: Date.now() };
+
+  const payload = {
+    nombre: data.nombre,
+    telefono: data.telefono,
+    ciudad: data.ciudad,
+    barrio: data.barrio,
+    direccion: data.direccion,
+    comentario: data.comentario,
+    envio: data.shipCost,
+    items: cart.map((it) => ({
+      id: it.id, title: it.title, talla: it.talla, cantidad: it.cantidad,
+      priceNum: it.priceNum, category: it.category, image: it.image,
+    })),
+  };
+
+  fetch("/api/pedidos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch(() => { ultimoPedidoEnviado = { firma: "", cuando: 0 }; });
 }
 
 /* ---------- Abrir / cerrar carrito ---------- */
@@ -753,7 +820,9 @@ function closeAllDropdowns() {
 }
 
 /* ---------- Inicialización ---------- */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await aplicarAjustesDelPanel();
+
   renderCategorias();
   renderNavDropdowns();
   renderProducts();
