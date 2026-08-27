@@ -71,7 +71,9 @@
           <option value="agotado">Agotados</option>
           <option value="oferta">En oferta</option>
           <option value="editado">Editados</option>
+          <option value="nuevo">Agregados por mí</option>
         </select>
+        <button type="button" class="btn btn-yellow" id="addProductBtn">+ Agregar producto</button>
       </div>
 
       <p class="result-count" id="prodCount"></p>
@@ -159,6 +161,62 @@
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="resetProductBtn">Restaurar original</button>
           <button type="submit" class="btn btn-yellow">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de producto nuevo (crear / editar productos agregados desde el panel) -->
+  <div class="modal" id="newProductModal" hidden>
+    <div class="modal-overlay" data-newprod-close></div>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="newProductTitle">
+      <button type="button" class="modal-close" data-newprod-close aria-label="Cerrar">✕</button>
+      <h3 id="newProductTitle">Agregar producto</h3>
+      <form id="newProductForm">
+        <label>Nombre del producto
+          <input type="text" name="title" required maxlength="160">
+        </label>
+        <div class="form-row">
+          <label>Categoría
+            <select name="category" required>
+              <option value="">Elige una categoría</option>
+              <option value="mujer">Mujer</option>
+              <option value="hombre">Hombre</option>
+              <option value="ninos">Niños</option>
+              <option value="accesorios">Accesorios</option>
+              <option value="deportes">Deportes</option>
+            </select>
+          </label>
+          <label>Subcategoría (opcional)
+            <input type="text" name="subcategory" maxlength="60" placeholder="Ej: Camisetas & Blusas">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Precio (COP)
+            <input type="number" name="priceNum" min="0" step="500" required>
+          </label>
+          <label>Precio tachado (opcional)
+            <input type="number" name="compareAtPrice" min="0" step="500" placeholder="Sin descuento">
+          </label>
+        </div>
+        <label>Imágenes: una URL por línea
+          <textarea name="images" rows="3" placeholder="images/productos/mi-producto-0.jpg"></textarea>
+        </label>
+        <label>Tallas o variantes (opcional, separadas por coma)
+          <input type="text" name="sizes" placeholder="S, M, L, XL">
+        </label>
+        <label>Descripción
+          <textarea name="description" rows="4" maxlength="4000"></textarea>
+        </label>
+        <div class="switch-row">
+          <label class="switch"><input type="checkbox" name="available" checked> <span>Disponible (si se apaga aparece "Agotado")</span></label>
+          <label class="switch"><input type="checkbox" name="onSale"> <span>Marcar como oferta</span></label>
+          <label class="switch"><input type="checkbox" name="hidden"> <span>Ocultar de la tienda (deshabilitado)</span></label>
+        </div>
+        <p class="form-error" id="newProductError" hidden></p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="deleteProductBtn" hidden>Eliminar producto</button>
+          <button type="submit" class="btn btn-yellow" id="newProductSubmit">Agregar producto</button>
         </div>
       </form>
     </div>

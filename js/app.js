@@ -123,6 +123,21 @@ async function aplicarAjustesDelPanel() {
   }
 }
 
+// Productos creados desde el panel de dueños (no vienen en el catálogo original).
+async function cargarProductosNuevos() {
+  try {
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 4000);
+    const res = await fetch("/api/catalogo/extra", { cache: "no-store", signal: ctrl.signal });
+    clearTimeout(timeout);
+    if (!res.ok) return;
+    const items = (await res.json()).items || [];
+    items.forEach((p) => PRODUCTS.push(p));
+  } catch (e) {
+    // Sin servidor (o sin conexión) se muestra el catálogo tal cual viene
+  }
+}
+
 /* ---------- Helpers ---------- */
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -821,6 +836,7 @@ function closeAllDropdowns() {
 
 /* ---------- Inicialización ---------- */
 document.addEventListener("DOMContentLoaded", async () => {
+  await cargarProductosNuevos();
   await aplicarAjustesDelPanel();
 
   renderCategorias();

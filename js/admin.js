@@ -19,6 +19,7 @@ const STATUS_LABELS = {
 /* ---------- Estado ---------- */
 const BASE_PRODUCTS = window.PRODUCTS || [];
 let overrides = {};          // { idProducto: { campos editados } }
+let customProducts = [];     // productos agregados desde el panel (no vienen en el catálogo)
 let orders = [];
 let orderFilter = "todos";
 let orderSearch = "";
@@ -27,6 +28,7 @@ let prodCat = "";
 let prodEstado = "";
 let prodVisible = 30;
 let editingId = null;
+let editingCustomId = null;
 
 /* ---------- Utilidades ---------- */
 function escapeHtml(str) {
@@ -81,6 +83,13 @@ async function api(url, options) {
 function merged(p) {
   const ov = overrides[p.id];
   return ov ? { ...p, ...ov, _editado: true } : { ...p, _editado: false };
+}
+
+// Catálogo original + productos creados desde el panel
+function todosLosProductos() {
+  return BASE_PRODUCTS.map(merged).concat(
+    customProducts.map((p) => ({ ...p, _editado: false, _custom: true }))
+  );
 }
 
 /* ============================================================
@@ -260,8 +269,12 @@ function exportarCSV() {
    ============================================================ */
 async function cargarAjustes() {
   try {
-    const data = await api("/api/admin/ajustes");
-    overrides = data.items || {};
+    const [ajustes, extra] = await Promise.all([
+      api("/api/admin/ajustes"),
+      api("/api/admin/productos-extra"),
+    ]);
+    overrides = ajustes.items || {};
+    customProducts = extra.items || [];
   } catch (e) {
     toast(e.message, true);
   }
@@ -270,16 +283,16 @@ async function cargarAjustes() {
 }
 
 function renderProdStats() {
+  const todos = todosLosProductos();
   let ocultos = 0, agotados = 0, ofertas = 0;
-  BASE_PRODUCTS.forEach((p) => {
-    const m = merged(p);
-    if (m.hidden) ocultos++;
-    if (!m.available) agotados++;
-    if (m.onSale) ofertas++;
+  todos.forEach((p) => {
+    if (p.hidden) ocultos++;
+    if (!p.available) agotados++;
+    if (p.onSale) ofertas++;
   });
   $("#prodStatsRow").innerHTML = `
-    <div class="stat"><div class="stat-label">Productos</div><div class="stat-value">${BASE_PRODUCTS.length}</div></div>
-    <div class="stat green"><div class="stat-label">Visibles</div><div class="stat-value">${BASE_PRODUCTS.length - ocultos}</div></div>
+    <div class="stat"><div class="stat-label">Productos</div><div class="stat-value">${todos.length}</div></div>
+    <div class="stat green"><div class="stat-label">Visibles</div><div class="stat-value">${todos.length - ocultos}</div></div>
     <div class="stat red"><div class="stat-label">Ocultos</div><div class="stat-value">${ocultos}</div></div>
     <div class="stat"><div class="stat-label">Agotados</div><div class="stat-value">${agotados}</div></div>
     <div class="stat blue"><div class="stat-label">En oferta</div><div class="stat-value">${ofertas}</div></div>`;
@@ -287,7 +300,7 @@ function renderProdStats() {
 
 function productosFiltrados() {
   const q = prodSearch.trim().toLowerCase();
-  return BASE_PRODUCTS.map(merged).filter((p) => {
+  return todosLosProductos().filter((p) => {
     if (prodCat && p.category !== prodCat) return false;
     if (q && !p.title.toLowerCase().includes(q) && !p.id.includes(q)) return false;
     if (prodEstado === "visible" && p.hidden) return false;
@@ -295,12 +308,14 @@ function productosFiltrados() {
     if (prodEstado === "agotado" && p.available) return false;
     if (prodEstado === "oferta" && !p.onSale) return false;
     if (prodEstado === "editado" && !p._editado) return false;
+    if (prodEstado === "nuevo" && !p._custom) return false;
     return true;
   });
 }
 
 function prodHtml(p) {
   const tags = [
+    p._custom ? '<span class="tag tag-edit">Nuevo</span>' : "",
     p.hidden ? '<span class="tag tag-hidden">Oculto</span>' : "",
     p.available ? '<span class="tag tag-ok">Disponible</span>' : '<span class="tag tag-out">Agotado</span>',
     p.onSale ? '<span class="tag tag-sale">Oferta</span>' : "",
@@ -309,7 +324,7 @@ function prodHtml(p) {
 
   return `
   <div class="prod-row ${p.hidden ? "oculto" : ""}" data-id="${escapeHtml(p.id)}">
-    <img src="${escapeHtml(p.images[0] || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+    <img src="${escapeHtml((p.images || [])[0] || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
     <div class="prod-info">
       <div class="prod-title">${escapeHtml(p.title)}</div>
       <div class="prod-sub">${CAT_NAMES[p.category] || p.category} ${p.subcategory ? "· " + escapeHtml(p.subcategory) : ""}</div>
@@ -356,6 +371,35 @@ async function restaurarProducto(id) {
   renderProductos();
 }
 
+/* ---------- Productos agregados desde el panel ---------- */
+async function guardarProductoNuevo(id, cambios) {
+  const data = await api(`/api/admin/productos-extra/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify(cambios),
+  });
+  const i = customProducts.findIndex((p) => p.id === id);
+  if (i >= 0) customProducts[i] = data.item;
+  renderProdStats();
+  renderProductos();
+}
+
+async function crearProductoNuevo(datos) {
+  const data = await api("/api/admin/productos-extra", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+  customProducts.unshift(data.item);
+  renderProdStats();
+  renderProductos();
+}
+
+async function borrarProductoNuevo(id) {
+  await api(`/api/admin/productos-extra/${encodeURIComponent(id)}`, { method: "DELETE" });
+  customProducts = customProducts.filter((p) => p.id !== id);
+  renderProdStats();
+  renderProductos();
+}
+
 /* ---------- Modal de edición ---------- */
 function abrirEditor(id) {
   const base = BASE_PRODUCTS.find((p) => p.id === id);
@@ -388,6 +432,52 @@ function cerrarEditor() {
   $("#editModal").hidden = true;
   document.body.style.overflow = "";
   editingId = null;
+}
+
+/* ---------- Modal de producto nuevo (crear / editar) ---------- */
+function abrirNuevoProducto() {
+  editingCustomId = null;
+  $("#newProductTitle").textContent = "Agregar producto";
+  $("#newProductSubmit").textContent = "Agregar producto";
+  $("#deleteProductBtn").hidden = true;
+  $("#newProductError").hidden = true;
+  const f = $("#newProductForm").elements;
+  $("#newProductForm").reset();
+  f.available.checked = true;
+  $("#newProductModal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function abrirEditorNuevo(id) {
+  const p = customProducts.find((x) => x.id === id);
+  if (!p) return;
+  editingCustomId = id;
+  $("#newProductTitle").textContent = "Editar producto";
+  $("#newProductSubmit").textContent = "Guardar cambios";
+  $("#deleteProductBtn").hidden = false;
+  $("#newProductError").hidden = true;
+
+  const f = $("#newProductForm").elements;
+  f.title.value = p.title;
+  f.category.value = p.category;
+  f.subcategory.value = p.subcategory || "";
+  f.priceNum.value = p.priceNum;
+  f.compareAtPrice.value = p.compareAtPrice || "";
+  f.images.value = (p.images || []).join("\n");
+  f.sizes.value = (p.sizes || []).join(", ");
+  f.description.value = p.description || "";
+  f.available.checked = !!p.available;
+  f.onSale.checked = !!p.onSale;
+  f.hidden.checked = !!p.hidden;
+
+  $("#newProductModal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function cerrarNuevoProducto() {
+  $("#newProductModal").hidden = true;
+  document.body.style.overflow = "";
+  editingCustomId = null;
 }
 
 /* ============================================================
@@ -503,6 +593,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btn = e.target.closest("[data-act]");
     if (!btn) return;
     const id = btn.closest(".prod-row").dataset.id;
+    const custom = customProducts.find((x) => x.id === id);
+
+    if (custom) {
+      try {
+        if (btn.dataset.act === "edit") return abrirEditorNuevo(id);
+        if (btn.dataset.act === "stock") {
+          await guardarProductoNuevo(id, { available: !custom.available });
+          toast(custom.available ? "Marcado como agotado" : "Marcado como disponible");
+        }
+        if (btn.dataset.act === "hide") {
+          await guardarProductoNuevo(id, { hidden: !custom.hidden });
+          toast(custom.hidden ? "Producto visible de nuevo" : "Producto deshabilitado en la tienda");
+        }
+      } catch (err) {
+        toast(err.message, true);
+      }
+      return;
+    }
+
     const base = BASE_PRODUCTS.find((p) => p.id === id);
     if (!base) return;
     const p = merged(base);
@@ -519,6 +628,65 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     } catch (err) {
       toast(err.message, true);
+    }
+  });
+
+  /* --- Modal de producto nuevo --- */
+  $("#addProductBtn").addEventListener("click", abrirNuevoProducto);
+  $$("[data-newprod-close]").forEach((el) => el.addEventListener("click", cerrarNuevoProducto));
+  $("#newProductForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target.elements;
+    const err = $("#newProductError");
+    err.hidden = true;
+
+    const precio = parseInt(f.priceNum.value, 10);
+    if (!f.category.value) {
+      err.textContent = "Elige una categoría.";
+      err.hidden = false;
+      return;
+    }
+    if (!Number.isFinite(precio) || precio < 0) {
+      err.textContent = "Escribe un precio válido.";
+      err.hidden = false;
+      return;
+    }
+    const datos = {
+      title: f.title.value,
+      category: f.category.value,
+      subcategory: f.subcategory.value,
+      priceNum: precio,
+      compareAtPrice: f.compareAtPrice.value === "" ? null : parseInt(f.compareAtPrice.value, 10),
+      images: f.images.value.split("\n").map((s) => s.trim()).filter(Boolean),
+      sizes: f.sizes.value.split(",").map((s) => s.trim()).filter(Boolean),
+      description: f.description.value,
+      available: f.available.checked,
+      onSale: f.onSale.checked,
+      hidden: f.hidden.checked,
+    };
+    try {
+      if (editingCustomId) {
+        await guardarProductoNuevo(editingCustomId, datos);
+        toast("Producto actualizado");
+      } else {
+        await crearProductoNuevo(datos);
+        toast("Producto agregado");
+      }
+      cerrarNuevoProducto();
+    } catch (e2) {
+      err.textContent = e2.message;
+      err.hidden = false;
+    }
+  });
+  $("#deleteProductBtn").addEventListener("click", async () => {
+    if (!editingCustomId) return;
+    if (!confirm("¿Eliminar este producto definitivamente? Esta acción no se puede deshacer.")) return;
+    try {
+      await borrarProductoNuevo(editingCustomId);
+      cerrarNuevoProducto();
+      toast("Producto eliminado");
+    } catch (e) {
+      toast(e.message, true);
     }
   });
 
@@ -632,6 +800,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* --- Escape cierra el modal --- */
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !$("#editModal").hidden) cerrarEditor();
+    if (e.key !== "Escape") return;
+    if (!$("#editModal").hidden) cerrarEditor();
+    if (!$("#newProductModal").hidden) cerrarNuevoProducto();
   });
 });

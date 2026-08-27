@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    GoFitten - API del panel de administración
    ------------------------------------------------------------
    Público:  ajustes del catálogo + registro de pedidos.
@@ -11,7 +11,9 @@ const auth = require("./auth");
 
 const OVERRIDES_FILE = "product-overrides.json";
 const ORDERS_FILE = "orders.json";
+const EXTRA_FILE = "products-extra.json";
 const MAX_ORDERS = 3000;
+const CATEGORIES = ["mujer", "hombre", "ninos", "accesorios", "deportes"];
 
 /* ---------- Utilidades de saneamiento ---------- */
 function str(v, max) {
@@ -79,6 +81,55 @@ function cleanOverride(body) {
   return out;
 }
 
+/* ---------- Productos nuevos (creados desde el panel) ---------- */
+function loadExtra() {
+  const db = readJson(EXTRA_FILE, { items: [] });
+  if (!Array.isArray(db.items)) db.items = [];
+  return db;
+}
+
+function slugify(text) {
+  return String(text || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "producto";
+}
+
+function strList(v, maxItems, maxLen) {
+  const arr = Array.isArray(v) ? v : String(v || "").split("\n");
+  return arr.map((x) => str(x, maxLen)).filter(Boolean).slice(0, maxItems);
+}
+
+function cleanNewProduct(body) {
+  const title = str(body.title, 160);
+  const category = CATEGORIES.includes(body.category) ? body.category : "";
+  const priceNum = intOrNull(body.priceNum);
+  if (!title) return { error: "El nombre del producto es obligatorio." };
+  if (!category) return { error: "Elige una categoría válida." };
+  if (priceNum === null || priceNum < 0) return { error: "Escribe un precio válido." };
+
+  const compareAtPrice = intOrNull(body.compareAtPrice);
+  return {
+    product: {
+      title,
+      price: money(priceNum),
+      priceNum,
+      compareAtPrice: compareAtPrice !== null && compareAtPrice > 0 ? compareAtPrice : null,
+      category,
+      subcategory: str(body.subcategory, 60),
+      activity: str(body.activity, 60),
+      onSale: Boolean(body.onSale),
+      available: body.available === undefined ? true : Boolean(body.available),
+      hidden: Boolean(body.hidden),
+      sizes: strList(body.sizes, 20, 60),
+      images: strList(body.images, 8, 500),
+      description: str(body.description, 4000),
+    },
+  };
+}
+
 /* ---------- Pedidos ---------- */
 function loadOrders() {
   const db = readJson(ORDERS_FILE, { nextNumero: 1, orders: [] });
@@ -100,6 +151,13 @@ function buildRouter() {
     const db = loadOverrides();
     res.set("Cache-Control", "no-store");
     res.json({ items: db.items, updatedAt: db.updatedAt });
+  });
+
+  // Productos creados desde el panel (no vienen en el catálogo original).
+  router.get("/catalogo/extra", (req, res) => {
+    const db = loadExtra();
+    res.set("Cache-Control", "no-store");
+    res.json({ items: db.items.filter((p) => !p.hidden) });
   });
 
   // Registra el pedido justo antes de abrir WhatsApp.
@@ -236,6 +294,57 @@ function buildRouter() {
     db.updatedAt = new Date().toISOString();
     writeJson(OVERRIDES_FILE, db);
     res.json({ ok: true, total: ids.length });
+  });
+
+  // --- Productos nuevos (creados desde el panel) ---
+  router.get("/admin/productos-extra", (req, res) => {
+    res.set("Cache-Control", "no-store");
+    res.json(loadExtra());
+  });
+
+  router.post("/admin/productos-extra", (req, res) => {
+    const result = cleanNewProduct(req.body || {});
+    if (result.error) return res.status(400).json({ error: result.error });
+    const db = loadExtra();
+    const existingIds = new Set(db.items.map((p) => p.id));
+    let id = slugify(result.product.title);
+    if (existingIds.has(id)) id = `${id}-${crypto.randomBytes(3).toString("hex")}`;
+    const item = {
+      id,
+      ...result.product,
+      creadoPor: req.admin.user,
+      creadoEn: new Date().toISOString(),
+    };
+    db.items.unshift(item);
+    writeJson(EXTRA_FILE, db);
+    res.json({ ok: true, item });
+  });
+
+  router.put("/admin/productos-extra/:id", (req, res) => {
+    const id = str(req.params.id, 120);
+    const db = loadExtra();
+    const i = db.items.findIndex((p) => p.id === id);
+    if (i < 0) return res.status(404).json({ error: "Producto no encontrado." });
+    const result = cleanNewProduct({ ...db.items[i], ...req.body });
+    if (result.error) return res.status(400).json({ error: result.error });
+    db.items[i] = {
+      ...db.items[i],
+      ...result.product,
+      editadoPor: req.admin.user,
+      editadoEn: new Date().toISOString(),
+    };
+    writeJson(EXTRA_FILE, db);
+    res.json({ ok: true, item: db.items[i] });
+  });
+
+  router.delete("/admin/productos-extra/:id", (req, res) => {
+    const id = str(req.params.id, 120);
+    const db = loadExtra();
+    const i = db.items.findIndex((p) => p.id === id);
+    if (i < 0) return res.status(404).json({ error: "Producto no encontrado." });
+    db.items.splice(i, 1);
+    writeJson(EXTRA_FILE, db);
+    res.json({ ok: true });
   });
 
   // --- Pedidos ---
